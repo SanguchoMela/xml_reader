@@ -3,6 +3,7 @@ import pandas as pd
 import xml.etree.ElementTree as ET
 
 data_facturas = []
+existen = None
 
 # Funcion para procesar las etiquetas de cada archivo xml
 def procesar_facturas(ruta_archivo):
@@ -109,41 +110,9 @@ def procesar_facturas(ruta_archivo):
 
 
 def exportar_facturas_excel(data, excel_file):
-    try:
-        # Separar los datos por diccionario
-        arreglo_datos = []
-        
-        # Iterar sobre cada elemento en data
-        for fila in data:
-            # Obtener el diccionario de info_xml de cada fila
-            info_xml = fila.get("info_xml",{})
-            
-            # Crear un nuevo diccionario para cada fila aplanada
-            nueva_fila = {
-                **info_xml,  # Agregar todos los elementos de info_xml como columnas
-                "Razón Social Comprador": info_xml.get("Razón Social Comprador", ""),
-                "RUC Comprador": info_xml.get("RUC Comprador", ""),
-                "Razón Social Vendedor": info_xml.get("Razón Social Vendedor", ""),
-                "RUC Vendedor": info_xml.get("RUC Vendedor", ""),
-                "Fecha de Emisión": info_xml.get("Fecha de Emisión", ""),
-                "Numero de Factura": info_xml.get("Numero de Factura", ""),
-                "Propina": info_xml.get("Propina"),
-                "Subtotal 0%": info_xml.get("Subtotal 0%"),
-                "Subtotal 15%": info_xml.get("Subtotal 15%"),
-                "Otra tarifa": info_xml.get("Otra tarifa"),
-                "Subtotal sin Impuestos": info_xml.get("Subtotal sin Impuestos", ""),
-                "Otro IVA": info_xml.get("Otro IVA"),
-                "IVA 15%": info_xml.get("IVA 15%", ""),
-                "Total": info_xml.get("Total", ""),
-                "Descripcion 1": info_xml.get("Descripcion 1", ""),
-                "Descripcion 2": info_xml.get("Descripcion 2", ""),
-                "Descripcion 3": info_xml.get("Descripcion 3", ""),
-            }
-
-            arreglo_datos.append(nueva_fila) 
-        
+    try:        
         # Crear DataFrame
-        df = pd.DataFrame(arreglo_datos)
+        df = pd.DataFrame([fila["info_xml"] for fila in data_facturas])
         
         # Covertir varias columnas a numeros
         for column in ["Propina","Subtotal 0%", "Subtotal 15%", "Otra tarifa", "Subtotal sin Impuestos", "Otro IVA", "IVA 15%", "Total"]:
@@ -160,16 +129,29 @@ def exportar_facturas_excel(data, excel_file):
 
 # Funcion para crear un arreglo de archivos xml a partir de una carpeta
 def procesar_carpeta_facturas(ruta_carpeta):
+    global existen
+    existen = False
+    
     # listar archivos
     archivos = os.listdir(ruta_carpeta)
+    
+    if not archivos:
+        return existen
 
     # filtrar solo archivos xml
     archivos_xml = [archivo for archivo in archivos if archivo.endswith(".xml")]
+    
+    if not archivos_xml:
+        return
+    
+    existen = True
 
     # procesar cada archivo xml
     for archivo_xml in archivos_xml:
         ruta_completa = os.path.join(ruta_carpeta,archivo_xml)
         procesar_facturas(ruta_completa)
+        
+    return existen
 
 
 # # ruta de la carpeta con archivos xml

@@ -37,18 +37,27 @@ def abrirCarpeta():
     if rutaCarpeta:
         labelCarpeta = tk.Label(frame_proceso, text="La carpeta que seleccionaste es: "+rutaCarpeta)
         labelCarpeta.pack()
-        # print("Espera mientras se procesa la carpeta")
-        print(f"{isFactura}")
+        
         if isFactura: 
-            procesar_carpeta_facturas(rutaCarpeta)
+            existen = procesar_carpeta_facturas(rutaCarpeta)
         else:
             procesar_carpeta_retenciones(rutaCarpeta)
+            
+        print(f"Archivos: {existen}")
         
-        labelGuardar = tk.Label(frame_proceso, text="Proceso completo, elige el lugar para guardar tu resumen")
-        labelGuardar.pack()
-        
-        buttonSave = tk.Button(frame_proceso,text="Guardar como", width=20, command=guardarExcelResumen)
-        buttonSave.pack()
+        if existen: 
+            labelGuardar = tk.Label(frame_proceso, text="Proceso completo, elige el lugar para guardar tu resumen")
+            labelGuardar.pack()
+            
+            buttonSave = tk.Button(frame_proceso,text="Guardar como", width=20, command=guardarExcelResumen)
+            buttonSave.pack()
+        else:
+            labelGuardar = tk.Label(frame_proceso, text="No se encontraron archivos en la carpeta.")
+            labelGuardar.pack()
+            
+            limpiarButton = tk.Button(frame_proceso, text="Limpiar", command=lambda:limpiarFrame(frame_proceso))
+            limpiarButton.pack()
+            
     else:
         labelCarpeta = tk.Label(frame_proceso, text="No seleccionaste ninguna carpeta")
         labelCarpeta.pack()
