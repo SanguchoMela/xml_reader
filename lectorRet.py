@@ -3,6 +3,7 @@ import pandas as pd
 import xml.etree.ElementTree as ET
 
 data_retenciones = []
+existen_retenciones = None
 
 def procesar_retenciones(ruta_archivo):
     try:
@@ -127,37 +128,9 @@ def procesar_retenciones(ruta_archivo):
         print(f"Error en archivo {ruta_archivo}: {e}") 
 
 def exportar_retenciones_excel(data, excel_file):
-    try:
-        # Separar los datos por diccionario
-        arreglo_datos = []
-        
-        # Iterar sobre cada elemento en data
-        for fila in data:
-            # Obtener el diccionario de info_xml de cada fila
-            info_xml = fila.get("info_xml",{})
-            
-            # Crear un nuevo diccionario para cada fila aplanada
-            nueva_fila = {
-                **info_xml,  # Agregar todos los elementos de info_xml como columnas
-                "Razón Social Agente Ret": info_xml.get("Razón Social Agente Ret", ""),
-                "RUC Agente": info_xml.get("RUC Agente", ""),
-                "Razón Social Sujeto Ret": info_xml.get("Razón Social Sujeto Ret", ""),
-                "RUC Sujeto": info_xml.get("RUC Sujeto", ""),
-                "Fecha de Emisión": info_xml.get("Fecha de Emisión", ""),
-                "Numero de Retención": info_xml.get("Numero de Retención", ""),
-                "Numero Doc Sustento": info_xml.get("Numero Doc Sustento", ""),
-                "Base imponible renta": info_xml.get("Base imponible renta", ""),
-                "Porcentaje retención renta": info_xml.get("Porcentaje retención renta", ""),
-                "Valor retenido renta": info_xml.get("Valor retenido renta", ""),
-                "Base imponible IVA": info_xml.get("Base imponible IVA", ""),
-                "Porcentaje retención IVA": info_xml.get("Porcentaje retención IVA", ""),
-                "Valor retenido IVA": info_xml.get("Valor retenido IVA", ""),
-            }
-                
-            arreglo_datos.append(nueva_fila) 
-        
+    try:        
         # Crear DataFrame
-        df = pd.DataFrame(arreglo_datos)
+        df = pd.DataFrame([fila["info_xml"] for fila in data_retenciones])
         
         # Covertir varias columnas a numeros
         for column in ["Base imponible renta","Porcentaje retención renta", "Valor retenido renta", "Base imponible IVA", "Porcentaje retención IVA", "Valor retenido IVA"]:
@@ -172,16 +145,24 @@ def exportar_retenciones_excel(data, excel_file):
         print(f"Error al exportar(): {e}")
 
 def procesar_carpeta_retenciones(ruta_carpeta):
+    global existen_retenciones
+    existen_retenciones = False 
+    
     # listar archivos
     archivos = os.listdir(ruta_carpeta)
 
     # filtrar solo archivos xml
     archivos_xml = [archivo for archivo in archivos if archivo.endswith(".xml")]
+    
+    if archivos_xml:
+        existen_retenciones = True
 
     # procesar cada archivo xml
     for archivo_xml in archivos_xml:
         ruta_completa = os.path.join(ruta_carpeta, archivo_xml)
         procesar_retenciones(ruta_completa)
+        
+    return existen_retenciones
 
 # # ruta de la carpeta con retenciones xml
 # carpeta_ret_xml = "C:/Users/Hp/Downloads/drP_ret_nov24"

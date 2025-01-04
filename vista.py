@@ -40,23 +40,35 @@ def abrirCarpeta():
         
         if isFactura: 
             existen = procesar_carpeta_facturas(rutaCarpeta)
+            
+            if existen: 
+                labelGuardar = tk.Label(frame_proceso, text="Proceso completo, elige el lugar para guardar tu resumen")
+                labelGuardar.pack()
+                
+                buttonSave = tk.Button(frame_proceso,text="Guardar como", width=20, command=guardarExcelResumen)
+                buttonSave.pack()
+            else:
+                labelGuardar = tk.Label(frame_proceso, text="No se encontraron archivos en la carpeta.")
+                labelGuardar.pack()
+                
+                limpiarButton = tk.Button(frame_proceso, text="Limpiar", command=lambda:limpiarFrame(frame_proceso))
+                limpiarButton.pack()
+                
         else:
-            procesar_carpeta_retenciones(rutaCarpeta)
+            existen_retenciones = procesar_carpeta_retenciones(rutaCarpeta)
             
-        print(f"Archivos: {existen}")
-        
-        if existen: 
-            labelGuardar = tk.Label(frame_proceso, text="Proceso completo, elige el lugar para guardar tu resumen")
-            labelGuardar.pack()
-            
-            buttonSave = tk.Button(frame_proceso,text="Guardar como", width=20, command=guardarExcelResumen)
-            buttonSave.pack()
-        else:
-            labelGuardar = tk.Label(frame_proceso, text="No se encontraron archivos en la carpeta.")
-            labelGuardar.pack()
-            
-            limpiarButton = tk.Button(frame_proceso, text="Limpiar", command=lambda:limpiarFrame(frame_proceso))
-            limpiarButton.pack()
+            if existen_retenciones: 
+                labelGuardar = tk.Label(frame_proceso, text="Proceso completo, elige el lugar para guardar tu resumen")
+                labelGuardar.pack()
+                
+                buttonSave = tk.Button(frame_proceso,text="Guardar como", width=20, command=guardarExcelResumen)
+                buttonSave.pack()
+            else:
+                labelGuardar = tk.Label(frame_proceso, text="No se encontraron archivos en la carpeta.")
+                labelGuardar.pack()
+                
+                limpiarButton = tk.Button(frame_proceso, text="Limpiar", command=lambda:limpiarFrame(frame_proceso))
+                limpiarButton.pack()
             
     else:
         labelCarpeta = tk.Label(frame_proceso, text="No seleccionaste ninguna carpeta")
