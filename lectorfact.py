@@ -48,6 +48,8 @@ def procesar_facturas(ruta_archivo):
         subtotal15 = ""
         iva15 = ""
         subtotal0 = ""
+        otraTarifa = ""
+        otroIVA = ""
         
         for total_impuesto in total_con_impuesto_elem.findall('totalImpuesto'):
             # Extraer los datos del elemento 'totalImpuesto'
@@ -60,6 +62,9 @@ def procesar_facturas(ruta_archivo):
                 iva15 = valor_iva
             elif codigo_porcentaje == '0':
                 subtotal0 = base_imponible
+            else:
+                otraTarifa = base_imponible
+                otroIVA = valor_iva
                 
         # Obtener información de detalles
         detalles_elem = comprobante_root.find('detalles')
@@ -88,8 +93,10 @@ def procesar_facturas(ruta_archivo):
                 "Propina": propina,
                 "Subtotal 0%": subtotal0,
                 "Subtotal 15%": subtotal15,
+                "Otra tarifa": otraTarifa,
                 "Subtotal sin Impuestos": total_sin_impuestos,
                 "IVA 15%": iva15,
+                "Otro IVA": otroIVA,
                 "Total": importe_total_factura,
                 "Descripcion 1": descripcion1,
                 "Descripcion 2": descripcion2,
@@ -123,21 +130,23 @@ def exportar_facturas_excel(data, excel_file):
                 "Propina": info_xml.get("Propina"),
                 "Subtotal 0%": info_xml.get("Subtotal 0%"),
                 "Subtotal 15%": info_xml.get("Subtotal 15%"),
+                "Otra tarifa": info_xml.get("Otra tarifa"),
                 "Subtotal sin Impuestos": info_xml.get("Subtotal sin Impuestos", ""),
+                "Otro IVA": info_xml.get("Otro IVA"),
                 "IVA 15%": info_xml.get("IVA 15%", ""),
                 "Total": info_xml.get("Total", ""),
                 "Descripcion 1": info_xml.get("Descripcion 1", ""),
                 "Descripcion 2": info_xml.get("Descripcion 2", ""),
                 "Descripcion 3": info_xml.get("Descripcion 3", ""),
             }
-                
+
             arreglo_datos.append(nueva_fila) 
         
         # Crear DataFrame
         df = pd.DataFrame(arreglo_datos)
         
         # Covertir varias columnas a numeros
-        for column in ["Propina","Subtotal 0%", "Subtotal 15%", "Subtotal sin Impuestos", "IVA 15%", "Total"]:
+        for column in ["Propina","Subtotal 0%", "Subtotal 15%", "Otra tarifa", "Subtotal sin Impuestos", "Otro IVA", "IVA 15%", "Total"]:
             df[column] = pd.to_numeric(df[column], errors='coerce')
             
         df.fillna(0, inplace=True)
@@ -161,6 +170,7 @@ def procesar_carpeta_facturas(ruta_carpeta):
     for archivo_xml in archivos_xml:
         ruta_completa = os.path.join(ruta_carpeta,archivo_xml)
         procesar_facturas(ruta_completa)
+
 
 # # ruta de la carpeta con archivos xml
 # carpeta_xml = "C:/Users/Hp/Downloads/drP_jun24"
