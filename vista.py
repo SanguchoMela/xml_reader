@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
 
-# import lectorfact
 from lectorfact import procesar_carpeta_facturas, exportar_facturas_excel, data_facturas
 
 from lectorRet import procesar_carpeta_retenciones, exportar_retenciones_excel, data_retenciones
