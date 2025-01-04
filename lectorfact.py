@@ -140,17 +140,12 @@ def procesar_carpeta_facturas(ruta_carpeta):
     
     # listar archivos
     archivos = os.listdir(ruta_carpeta)
-    
-    if not archivos:
-        return existen
 
     # filtrar solo archivos xml
     archivos_xml = [archivo for archivo in archivos if archivo.endswith(".xml")]
     
-    if not archivos_xml:
-        return
-    
-    existen = True
+    if archivos_xml:
+        existen = True
 
     # procesar cada archivo xml
     for archivo_xml in archivos_xml:
