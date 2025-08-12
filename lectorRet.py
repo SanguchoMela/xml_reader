@@ -114,7 +114,8 @@ def procesar_retenciones(ruta_archivo):
                 "Razón Social Sujeto Ret": razon_social_sujeto_retenido,
                 "RUC Sujeto": ruc_sujeto_retenido,
                 "Fecha de Emisión": fecha_emision_ret,
-                "Numero de Retención": f"{estab}-{pto_emi}-{secuencial}",
+                "Numero de Retención": f"{estab}-{pto_emi}",
+                "Secuencial": secuencial,
                 "Numero Doc Sustento": num_sustento,
                 "Base imponible renta": base_renta,
                 "Porcentaje retención renta": porcentaje_renta,
@@ -171,7 +172,7 @@ def procesar_carpeta_retenciones(ruta_carpeta):
     return existen_retenciones
 
 # # ruta de la carpeta con retenciones xml
-# carpeta_ret_xml = "C:/Users/Hp/Downloads/drP_ret_nov24"
+# carpeta_ret_xml = "C:/Users/Hp/Downloads/DL_ret_jul25"
 
 # # procesar todos los xml en la carpeta
 # try:
@@ -180,7 +181,7 @@ def procesar_carpeta_retenciones(ruta_carpeta):
 #     print(f"Error: {e}")
 
 # # exportar datos a un archivo excel
-# excel_ruta = "C:/Users/Hp/Downloads/resumenRet_drP_nov24.xlsx"
+# excel_ruta = "C:/Users/Hp/Downloads/resumenRet_DL_jul25.xlsx"
 
 # print(exportar_retenciones_excel(data_retenciones, excel_ruta))
 
